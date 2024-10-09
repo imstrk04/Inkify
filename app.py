@@ -108,7 +108,13 @@ def verify_otp():
 @app.route('/home', methods = ['GET', 'POST'])
 def home():
     if request.method == 'GET':
-        return render_template("safe.html")
+        return render_template("home.html")
+
+@app.route('/logout')
+def logout():
+    # Remove the user from the session
+    session.pop('user_id', None)  
+    return redirect(url_for('login')) 
 
 
 if __name__ == "__main__":
