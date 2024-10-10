@@ -4,10 +4,13 @@ from application.models import User, TextToHandwriting  # Import your models
 from application.database import db  # Assuming your db is initialized here
 import secrets
 from flask_mail import Mail, Message
-app = Flask(__name__)
+from functools import wraps
 import os
 from dotenv import load_dotenv
+from PIL import Image, ImageDraw, ImageFont
 
+
+app = Flask(__name__)
 load_dotenv()
 
 # Configuring the SQLite database
@@ -33,6 +36,17 @@ with app.app_context():
     db.create_all()
     print("Tables created")
 
+# Middleware to require login for certain routes
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('You need to log in first.', 'danger')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# -------------------------- REGISTER PAGE --------------------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -58,6 +72,8 @@ def register():
     
     elif request.method == 'GET':
         return render_template("register.html")
+
+# -------------------------- LOGIN PAGE --------------------------
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -105,16 +121,92 @@ def verify_otp():
             flash('Invalid OTP. Please try again.', 'danger')
             return redirect(url_for('verify_otp'))  # Redirect back to OTP verification
 
-@app.route('/home', methods = ['GET', 'POST'])
-def home():
-    if request.method == 'GET':
-        return render_template("home.html")
 
 @app.route('/logout')
+@login_required  # Protect this route with the login_required middleware
 def logout():
     # Remove the user from the session
     session.pop('user_id', None)  
+    flash('You have been logged out.', 'success')
     return redirect(url_for('login')) 
+
+# -------------------------- HOME PAGE --------------------------
+
+@app.route('/home', methods=['GET', 'POST'])
+@login_required  # Protect this route with the login_required middleware
+def home():
+    if request.method == 'GET':
+        return render_template("home.html")
+    
+# -------------------------- TEXT TO HANDWRITING PAGE --------------------------
+def text_to_handwriting(text, font_path, output_path, background_type, image_size=(800, 400), font_size=30, text_color=(0, 0, 0)):
+    # Load the appropriate background image
+    if background_type == 'ruled':
+        background = Image.open('static/ruled_page.jpg').resize(image_size)
+    else:  # unruled
+        background = Image.open('static/unruled_page.jpg').resize(image_size)
+
+    # Create a blank image with the selected background
+    img = background.copy()
+    draw = ImageDraw.Draw(img)
+    
+    # Load the handwritten font
+    font = ImageFont.truetype(font_path, font_size)
+
+    # Define text position
+    x, y = 20, 20  # Starting position for text
+
+    # Split text into lines to fit in the image
+    lines = text.split('\n')
+    for line in lines:
+        # Split long lines
+        words = line.split(' ')
+        current_line = ''
+        
+        for word in words:
+            # Check if adding the next word would overflow the line
+            # Using textbbox for newer Pillow versions
+            width, _ = draw.textbbox((0, 0), current_line + word, font=font)[2:4]
+
+            if width < (image_size[0] - 40):  # 20 padding on each side
+                current_line += (word + ' ')
+            else:
+                # Draw the current line and reset for the next line
+                draw.text((x, y), current_line, font=font, fill=text_color)
+                y += font_size + 10  # Move down for the next line
+                current_line = word + ' '  # Start new line with the current word
+
+        # Draw any remaining text in current_line
+        if current_line:
+            draw.text((x, y), current_line, font=font, fill=text_color)
+            y += font_size + 10  # Move down for the next line
+
+    # Save the image
+    img.save(output_path)
+
+@app.route('/home/text_to_handwriting_route', methods=['GET', 'POST'])
+def text_to_handwriting_route():
+    if request.method == 'POST':
+        text = request.form['text']
+        background_type = request.form['background']
+        font_path = os.path.join('static/fonts', 'handwritten1.ttf')  # Update this with your font path
+        output_path = os.path.join('static', 'output', 'handwriting.png')  # Image save path
+
+        # Generate handwriting image
+        text_to_handwriting(text, font_path, output_path, background_type)
+
+        # Render the image in a template or send it as a response
+        return render_template('handwriting_result.html', image_path='output/handwriting.png')
+    else:
+        return render_template('generate_handwriting.html')  # Render the form on GET request
+
+@app.route('/home/handwriting_to_text_route', methods=['GET','POST'])
+def handwriting_to_text_route():
+    return render_template("safe.html")
+
+@app.route('/home/personalized_handwriting', methods = ["GET"])
+def personalized_handwriting():
+    return render_template("safe.html")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Handwriting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            cursor: move;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        #text-input, #size-slider {
+            position: absolute;
+            display: none; /* Hidden by default */
+        }
+
+        #size-slider {
+            top: 50px; /* Adjust top position as needed */
+        }
+
+        .download-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="handwritingCanvas" width="800" height="600"></canvas>
+        <input type="text" id="text-input" />
+        <input type="range" id="size-slider" min="10" max="100" step="1" />
+        <div class="buttons">
+            <a href="{{ url_for('home') }}" class="btn">Generate Another</a>
+            <button class="btn download-btn" id="downloadBtn">Download Image</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('handwritingCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Load your handwriting image
+        const img = new Image();
+        img.src = '{{ url_for("static", filename=image_path) }}'; // Use your image path here
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            drawText(currentText, textX, textY); // Draw initial text
+        };
+
+        let isDragging = false;
+        let offsetX, offsetY;
+        let textX = 50; // Initial X position of text
+        let textY = 100; // Initial Y position of text
+        let textSize = 24; // Initial text size
+        let currentText = ""; // Initial text
+
+        function drawText(text, x, y) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.font = `${textSize}px Arial`;
+            ctx.fillStyle = 'black';
+            ctx.fillText(text, x, y);
+        }
+
+        function isMouseOnText(mouseX, mouseY) {
+            return mouseX >= textX && mouseX <= textX + ctx.measureText(currentText).width &&
+                   mouseY >= textY - textSize && mouseY <= textY;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const mouseX = e.offsetX;
+            const mouseY = e.offsetY;
+
+            // Check if the mouse is on the text
+            if (isMouseOnText(mouseX, mouseY)) {
+                isDragging = true;
+                offsetX = mouseX - textX;
+                offsetY = mouseY - textY;
+                document.getElementById('text-input').style.display = 'block';
+                document.getElementById('size-slider').style.display = 'block';
+                document.getElementById('text-input').value = currentText; // Pre-fill with current text
+                document.getElementById('text-input').style.left = textX + 'px';
+                document.getElementById('text-input').style.top = (textY - textSize) + 'px';
+                document.getElementById('size-slider').value = textSize; // Set the slider to current text size
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                textX = e.offsetX - offsetX;
+                textY = e.offsetY - offsetY;
+                drawText(currentText, textX, textY); // Update text position
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        // Update the canvas text when editing
+        document.getElementById('text-input').addEventListener('input', (e) => {
+            currentText = e.target.value; // Update current text
+            drawText(currentText, textX, textY); // Redraw text
+        });
+
+        // Update text size when slider changes
+        document.getElementById('size-slider').addEventListener('input', (e) => {
+            textSize = e.target.value; // Update text size
+            drawText(currentText, textX, textY); // Redraw text with new size
+        });
+
+        // Download image functionality
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'handwriting.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>
