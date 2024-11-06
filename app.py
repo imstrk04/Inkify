@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, session
+from flask import Flask, request, render_template, redirect, url_for, flash, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from application.models import User, TextToHandwriting  # Import your models
 from application.database import db  # Assuming your db is initialized here
@@ -8,7 +8,18 @@ from functools import wraps
 import os
 from dotenv import load_dotenv
 from PIL import Image, ImageDraw, ImageFont
-
+import requests
+import io
+import pywhatkit as pwk
+import cv2
+import numpy as np
+import pytesseract
+import base64
+import fpdf
+import os
+import pywhatkit as kit
+from difflib import SequenceMatcher
+import tempfile
 
 app = Flask(__name__)
 load_dotenv()
@@ -139,6 +150,8 @@ def home():
         return render_template("home.html")
     
 # -------------------------- TEXT TO HANDWRITING PAGE --------------------------
+
+
 def text_to_handwriting(text, font_path, output_path, background_type, image_size=(800, 400), font_size=30, text_color=(0, 0, 0)):
     # Load the appropriate background image
     if background_type == 'ruled':
@@ -200,9 +213,51 @@ def text_to_handwriting_route():
     else:
         return render_template('generate_handwriting.html')  # Render the form on GET request
 
-@app.route('/home/handwriting_to_text_route', methods=['GET','POST'])
+pytesseract.pytesseract.tesseract_cmd = "/usr/local/bin/tesseract"
+
+def process_image(filename):
+    # Read the image with OpenCV
+    img = cv2.imread(filename)
+
+    # Convert the image to grayscale
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Apply dilation and erosion to remove noise
+    kernel = np.ones((1, 1), np.uint8)
+    img = cv2.dilate(img, kernel, iterations=1)
+    img = cv2.erode(img, kernel, iterations=1)
+
+    # Apply thresholding for a black-and-white image
+    _, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+
+    # Recognize text with Tesseract OCR
+    result = pytesseract.image_to_string(img)
+
+    return result
+
+@app.route("/home/handwriting_to_text_route", methods=["GET", "POST"])
 def handwriting_to_text_route():
-    return render_template("safe.html")
+    if request.method == "POST":
+        # Handle file upload
+        if 'file' not in request.files:
+            return "No file part"
+        file = request.files['file']
+        if file.filename == '':
+            return "No selected file"
+        if file:
+            # Save the uploaded file to a temporary directory
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+                temp_filename = temp_file.name
+                file.save(temp_filename)
+            
+            # Process image to extract text
+            extracted_text = process_image(temp_filename)
+            os.remove(temp_filename)  # Remove the temp file after processing
+            
+            # Return the result page with the recognized text
+            return render_template("htt_result.html", recognized_text=extracted_text)
+
+    return render_template("handwriting_to_text.html")
 
 @app.route('/home/personalized_handwriting', methods = ["GET"])
 def personalized_handwriting():
@@ -210,4 +265,4 @@ def personalized_handwriting():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port = 8023)
