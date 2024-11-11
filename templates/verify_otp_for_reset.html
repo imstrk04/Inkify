@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkify - Verify OTP</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="heading-container">
+        <h1>WELCOME TO INKIFY</h1>
+    </div>
+    <div class="wrapper">
+        <form action="/verify_otp_for_reset" method="POST">
+            <h2>Verify OTP</h2>
+            <p style="color: #fff; font-size: 1rem; margin-bottom: 15px;">Enter the OTP sent to your email.</p>
+            <div class="input-field">
+                <input type="text" name="otp" required>
+                <label>Enter OTP</label>
+            </div>
+            <button type="submit">Verify OTP</button>
+            <div class="register">
+                <p>Didn't receive the OTP? <a href="{{ url_for('forgot_password') }}">Resend OTP</a></p>
+            </div>
+        </form>
+    </div>
+    <script src="static/script.js"></script>
+</body>
+</html>

@@ -141,6 +141,66 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('login')) 
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # Generate OTP
+            otp = secrets.randbelow(1000000)  # Generate a 6-digit OTP
+            session['reset_otp'] = otp
+            session['reset_user_id'] = user.user_id
+            
+            # Send OTP to user's email
+            msg = Message('Inkify - Password Reset OTP', recipients=[email])
+            msg.body = f'Your OTP for password reset is: {otp}'
+            mail.send(msg)
+            
+            flash('An OTP has been sent to your email. Please check your inbox.', 'info')
+            return redirect(url_for('verify_otp_for_reset'))
+        else:
+            flash('No account found with this email.', 'danger')
+            return redirect(url_for('forgot_password'))
+    
+    return render_template("forgot_password.html")
+
+@app.route('/verify_otp_for_reset', methods=['GET', 'POST'])
+def verify_otp_for_reset():
+    if request.method == 'POST':
+        entered_otp = request.form['otp']
+        if int(entered_otp) == session.get('reset_otp'):
+            # OTP is valid, proceed to reset password
+            session.pop('reset_otp', None)  # Clear OTP from session
+            return redirect(url_for('reset_password'))
+        else:
+            flash('Invalid OTP. Please try again.', 'danger')
+            return redirect(url_for('verify_otp_for_reset'))
+    
+    return render_template("verify_otp_for_reset.html")
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        new_password = request.form['new_password']
+        user_id = session.get('reset_user_id')
+        
+        if user_id:
+            user = User.query.get(user_id)
+            user.set_password(new_password)  # Assuming you have a method to hash the password
+            db.session.commit()
+            
+            session.pop('reset_user_id', None)  # Clear user ID from session
+            flash('Your password has been reset successfully! You can now log in.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('An error occurred. Please try again.', 'danger')
+            return redirect(url_for('forgot_password'))
+    
+    return render_template("reset_password.html")
+
+
 # -------------------------- HOME PAGE --------------------------
 
 @app.route('/home', methods=['GET', 'POST'])
