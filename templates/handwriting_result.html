@@ -132,7 +132,8 @@
                 <strong>Error:</strong> {{ error_message }}
             </div>
         {% elif image_path %}
-            <img src="{{ url_for('static', filename=image_path) }}" alt="Handwritten Text" class="w-full">
+            <!-- Canvas element for the generated image -->
+            <canvas id="handwritingCanvas" width="800" height="600"></canvas>
             <div class="flex justify-center mt-4">
                 <a href="{{ url_for('home') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Generate Another</a>
                 <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" id="downloadBtn">Download Image</button>
@@ -145,7 +146,19 @@
     </div>
 
     <script>
-        // Your existing handwriting editor script
+        const canvas = document.getElementById('handwritingCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.src = '{{ url_for("static", filename=image_path) }}'; // Ensure image_path is correct
+        img.onload = () => { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+
+        // Download the image when "Download Image" button is clicked
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'handwriting.png';
+            link.href = canvas.toDataURL('image/png'); // Convert canvas to PNG format
+            link.click();
+        });
     </script>
 </body>
 </html>

@@ -211,7 +211,7 @@ def home():
     
 # -------------------------- TEXT TO HANDWRITING PAGE --------------------------
 
-
+'''
 def text_to_handwriting(text, font_path, output_path, background_type, image_size=(800, 400), font_size=30, text_color=(0, 0, 0)):
     # Load the appropriate background image
     if background_type == 'ruled':
@@ -272,6 +272,57 @@ def text_to_handwriting_route():
         return render_template('handwriting_result.html', image_path='output/handwriting.png')
     else:
         return render_template('generate_handwriting.html')  # Render the form on GET request
+'''
+
+@app.route('/text_to_handwriting', methods=['POST', 'GET'])
+def text_to_handwriting_route():
+    if request.method == 'GET':
+        return render_template("generate_handwriting.html")
+    else:
+        text = request.form['text']
+        background_type = request.form['background']
+        font_name = request.form['font']
+
+        # Set paths for font and output
+        font_path = os.path.join('static', 'fonts', font_name)
+        output_path = os.path.join('static', 'output', 'handwriting.png')
+
+        # Call the function to create the handwriting image
+        text_to_handwriting(text, font_path, output_path, background_type)
+
+        # Return result to display
+        return render_template('handwriting_result.html', image_path='output/handwriting.png')
+
+def text_to_handwriting(text, font_path, output_path, background_type, image_size=(800, 400), font_size=30, text_color=(0, 0, 0)):
+    if background_type == 'ruled':
+        background = Image.open('static/ruled_page.jpg').resize(image_size)
+    else:
+        background = Image.open('static/unruled_page.jpg').resize(image_size)
+
+    img = background.copy()
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype(font_path, font_size)
+
+    x, y = 20, 20
+    lines = text.split('\n')
+    for line in lines:
+        words = line.split(' ')
+        current_line = ''
+        
+        for word in words:
+            width, _ = draw.textbbox((0, 0), current_line + word, font=font)[2:4]
+            if width < (image_size[0] - 40):
+                current_line += (word + ' ')
+            else:
+                draw.text((x, y), current_line, font=font, fill=text_color)
+                y += font_size + 10
+                current_line = word + ' '
+
+        if current_line:
+            draw.text((x, y), current_line, font=font, fill=text_color)
+            y += font_size + 10
+
+    img.save(output_path)
 
 pytesseract.pytesseract.tesseract_cmd = "/usr/local/bin/tesseract"
 

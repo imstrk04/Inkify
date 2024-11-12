@@ -88,6 +88,14 @@
             <option value="ruled">Ruled Paper</option>
             <option value="unruled">Unruled Paper</option>
         </select>
+        <label for="font" class="block mb-2 text-gray-700">Select Font:</label>
+        <select name="font" id="font" required class="w-full border border-gray-300 rounded-lg p-2 mb-4">
+            <option value="handwritten1.ttf">Handwritten Font 1</option>
+            <option value="handwritten2.ttf">Handwritten Font 2</option>
+            <option value="handwritten3.ttf">Handwritten Font 3</option>
+            <option value="handwritten4.ttf">Handwritten Font 4</option>
+            <option value="handwritten5.ttf">Handwritten Font 5</option>
+        </select>
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">Generate Handwriting</button>
     </form>
     <a href="{{ url_for('home') }}"><button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">Home</button></a>
