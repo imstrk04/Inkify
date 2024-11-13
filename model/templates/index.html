@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <title>Generate Handwriting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+        select, input, button {
+            margin: 8px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        .back-link {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Handwritten Text</h1>
+        <form action="/generate" method="post">
+            <label for="text">Enter Text:</label>
+            <input type="text" name="text" required>
+            <label for="font_name">Select Font:</label>
+            <select name="font_name" required>
+                {% for font in fonts %}
+                    <option value="{{ font }}">{{ font }}</option>
+                {% endfor %}
+            </select>
+            <label for="format">Select Format:</label>
+            <select name="format" required>
+                <option value="png">PNG</option>
+                <option value="pdf">PDF</option>
+            </select>
+            <button type="submit">Generate & Download</button>
+        </form>
+        <p><a href="{{ url_for('upload_font') }}" class="back-link">Upload New Handwriting Font</a></p>
+    </div>
+</body>
+</html>

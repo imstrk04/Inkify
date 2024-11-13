@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+    <title>Upload Handwriting Font</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+        input, button {
+            margin: 8px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        .back-link {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Handwriting Font</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="font_name">Font Name:</label>
+            <input type="text" name="font_name" required>
+            <label for="handwriting_image">Select Image:</label>
+            <input type="file" name="handwriting_image" required>
+            <button type="submit">Upload Font</button>
+        </form>
+        <p><a href="{{ url_for('index') }}" class="back-link">Back to Generate Handwriting</a></p>
+    </div>
+</body>
+</html>

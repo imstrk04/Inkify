@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+    <title>Generate Handwriting</title>
+    <style>
+        /* Reset default styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 0.9em;
+            font-weight: 500;
+            margin: 15px 0 5px;
+            display: block;
+            text-align: left;
+            color: #555;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Handwritten Text</h1>
+        <form action="/generate" method="post">
+            <label for="text">Enter Text:</label>
+            <input type="text" name="text" placeholder="Type your text here..." required>
+            
+            <label for="font_name">Select Font:</label>
+            <select name="font_name" required>
+                {% for font in fonts %}
+                    <option value="{{ font }}">{{ font }}</option>
+                {% endfor %}
+            </select>
+            
+            <label for="format">Select Format:</label>
+            <select name="format" required>
+                <option value="png">PNG</option>
+                <option value="pdf">PDF</option>
+            </select>
+            
+            <button type="submit">Generate & Download</button>
+        </form>
+         <p><a href="{{ url_for('home') }}" class="back-link">Home</a></p>
+        
+        <p><a href="{{ url_for('upload_font') }}" class="back-link">Upload New Handwriting Font</a></p>
+    </div>
+</body>
+</html>
