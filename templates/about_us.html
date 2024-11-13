@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Inkify</title>
+    <!-- Link to external CSS (Bootstrap for convenience) -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: url('/static/about-us-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding-top: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f8f9fa;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-back {
+            background-color: #4ca3f2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #357abf;
+        }
+
+        .team-section {
+            margin-top: 50px;
+            padding: 0 10px;
+        }
+
+        .team-member {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .team-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .team-member p {
+            font-size: 1rem;
+            color: #ddd;
+        }
+
+        /* Ensuring team members align in one row on larger screens */
+        @media (min-width: 768px) {
+            .team-section .row {
+                display: flex;
+                justify-content: space-between;
+            }
+            .team-member {
+                margin-bottom: 0;
+                text-align: center;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>About Us</h1>
+        <p>Inkify is a creative platform that aims to bring personalized handwriting experiences to everyone. Whether you want to turn your text into beautiful handwriting, convert handwritten notes into text, or create a personalized handwriting style, Inkify makes it easy and fun. Our mission is to inspire creativity and provide users with unique ways to express themselves.</p>
+        <a href="{{ url_for('home') }}" class="btn-back"><i class="fas fa-home"></i> Back to Home</a>
+    </div>
+
+    <!-- Developer Team Section -->
+    <div class="container team-section">
+        <h2>Meet the Team</h2>
+        <div class="row">
+            <!-- Developer 1: Sada -->
+            <div class="col-md-3 team-member">
+                <img src="/static/sada.jpeg" alt="Sada">
+                <h3>Sada</h3>
+                <p>3122225002109 <br> Worked in Backend and UI for the project. Text to Handwriting Feature Dev</p>
+            </div>
+            <!-- Developer 2: Ritujaa -->
+            <div class="col-md-3 team-member">
+                <img src="/static/ritujaa.png" alt="Ritujaa">
+                <h3>Ritujaa</h3>
+                <p>3122225002107 <br> Personalised Handwriting Generator Dev</p>
+            </div>
+            <!-- Developer 3: Sneha -->
+            <div class="col-md-3 team-member">
+                <img src="/static/sneha.jpg" alt="Sneha">
+                <h3>Sneha</h3>
+                <p>3122225002132 <br> Worked alongside Shreya to develop Handwriting to Text</p>
+            </div>
+            <!-- Developer 4: Shreya -->
+            <div class="col-md-3 team-member">
+                <img src="/static/shreya.jpeg" alt="Shreya">
+                <h3>Shreya</h3>
+                <p>3122225002127 <br> Worked alongside Sneha to develop Handwriting to Text</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

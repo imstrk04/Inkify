@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Inkify</title>
+    <!-- Bootstrap 4 CSS for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: url('/static/faq-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f8f9fa;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #f8f9fa;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #ddd;
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            background-color: #4ca3f2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #357abf;
+        }
+
+        .faq-section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Frequently Asked Questions (FAQ)</h1>
+
+        <div class="faq-section">
+            <h3><i class="fas fa-question-circle"></i> How do I convert text to handwriting?</h3>
+            <p>Simply enter the text in the provided text box and click on the "Try it Now" button to convert it into handwriting.</p>
+        </div>
+
+        <div class="faq-section">
+            <h3><i class="fas fa-question-circle"></i> Can I upload my own handwriting?</h3>
+            <p>Yes, you can upload your handwriting image and use the Handwriting to Text feature to convert it into typed text.</p>
+        </div>
+
+        <div class="faq-section">
+            <h3><i class="fas fa-question-circle"></i> Is there a limit to the amount of text I can input?</h3>
+            <p>No, there is no fixed limit, but we recommend keeping your input text under 1000 characters for the best performance.</p>
+        </div>
+
+        <div class="faq-section">
+            <h3><i class="fas fa-question-circle"></i> What formats are supported for handwriting uploads?</h3>
+            <p>We currently support JPG, PNG, and JPEG image formats for handwriting uploads.</p>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="btn-back"><i class="fas fa-home"></i> Back to Home</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

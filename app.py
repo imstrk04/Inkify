@@ -209,6 +209,21 @@ def home():
     if request.method == 'GET':
         return render_template("home.html")
     
+# About Us page route
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
+
+# FAQ page route
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
+# Contact Us page route
+@app.route('/contact_us')
+def contact_us():
+    return render_template('contact_us.html')
+    
 # -------------------------- TEXT TO HANDWRITING PAGE --------------------------
 
 '''
